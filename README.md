@@ -41,7 +41,7 @@ Features
 ### Future Additions
 
 1. **Feature 4: PostgreSQL migration**
-   - Migration to PostgreSQL DB
+   - Migration to PostgreSQL DB and consider NoSQL
 
 2. **Feature 5:Dockerized application**
    - Dockerize the environment for easier installation

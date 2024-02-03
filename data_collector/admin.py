@@ -1,8 +1,5 @@
 from django.contrib import admin
-
-# Register your models here.
-# admin.py
-
-from .models import InvoiceFile
+from .models import InvoiceFile, Invoice
 
 admin.site.register(InvoiceFile)
+admin.site.register(Invoice)

@@ -2,7 +2,7 @@ from django.db import models
 
 class InvoiceFile(models.Model):
     title = models.CharField(max_length=255)
-    file = models.FileField(upload_to='uploads/')
+    file = models.FileField(upload_to='invoices/')
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
@@ -17,7 +17,7 @@ class Invoice(models.Model):
     daily_fee_percent = models.DecimalField(max_digits=5, decimal_places=4)
     currency = models.CharField(max_length=3)
     revenue_source = models.CharField(max_length=255)
-    customer = models.CharField(max_length=255)
+    customer = models.ForeignKey('customer.Customer', on_delete=models.CASCADE)
     expected_payment_duration = models.PositiveIntegerField()
 
     def __str__(self):
