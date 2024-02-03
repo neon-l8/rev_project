@@ -1,5 +1,3 @@
-# rev_project
-
 # Revving invoice analyzer
 A web application that process a spreadsheet and calculates the total values and fees of the invoices 
 
@@ -15,17 +13,18 @@ Features
 
 1. **App scaffolding:**
    - Selecting sqlite for simplicity
-   - Creating model to store the uploaded file
-   - Create a model to store the data from the uploaded file
+   - Create Customer model
+   - Create model to store the uploaded file
+   - Create model to store the data from the uploaded file
    - Create model to store data of total values per revenue/client
-   - set up celery
+   - Set up celery
 
 
 2. **Feature 2: Data ingestion**
-   - Saves data from spreadsheet and saves it in db
-   - Set up excel processor: panda
    - Prepare admin interface to upload the file
-   - Implement spreadsheet structure validation
+   - Set up excel processor: panda
+   - Saves data from spreadsheet and saves it in db
+      - Implement spreadsheet structure validation
    - Implement spreadsheet data validation
         - Create excel with invalid data rows and send it through email to the person that uploaded it.
    - Test on structure validation
