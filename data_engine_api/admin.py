@@ -1,3 +1,5 @@
 from django.contrib import admin
+from data_engine_api.models import CustomerRevenue
 
-# Register your models here.
+
+admin.site.register(CustomerRevenue)
