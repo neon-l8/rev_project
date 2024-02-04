@@ -18,7 +18,7 @@ def process_file_data_to_db(invoice_file):
     df['customer'] = df['customer'].apply(lambda customer_name: Customer.objects.get_or_create(name=customer_name)[0].id)
 
     # Filter out rows with specified conditions
-    df = df[(df['value'] != 0) & (df['haircut percent'] >= 0) & (df['Daily fee percent'] >= 0) & (df['Expected payment duration'] >= 0)]
+    df =   df[(df['invoice number'] > 0) & (df['value'] >= 0) & (df['haircut percent'] >= 0) & (df['Daily fee percent'] >= 0) & (df['Expected payment duration'] >= 0)]
 
     # Deduplicate based on 'invoice_number' and keep the first occurrence
     df = df.drop_duplicates(subset=['invoice number','customer'], keep='first')
