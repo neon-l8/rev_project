@@ -51,6 +51,9 @@ Features
 4. **Feature 7:Dockerized application**
    - Dockerize the environment for easier installation
 
+5. **Feature 8: Django query counter**
+   - Install tool to check some optimizable queries
+
 
 ## Getting Started
 

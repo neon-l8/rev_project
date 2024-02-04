@@ -5,5 +5,4 @@ from data_collector.models import InvoiceFile
 
 @receiver(post_save, sender=InvoiceFile)
 def on_invoice_file_save(sender, instance, **kwargs):
-    print("hola hola hola")
     process_file_data_to_db(instance)

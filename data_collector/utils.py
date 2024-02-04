@@ -14,6 +14,7 @@ def process_file_data_to_db(invoice_file):
     # Convert 'date' column to datetime format
     df['date'] = pd.to_datetime(df['date'], errors='coerce', yearfirst=True)
 
+    #TODO: Optimizable query
     # We create the customers if they don't exist
     df['customer'] = df['customer'].apply(lambda customer_name: Customer.objects.get_or_create(name=customer_name)[0].id)
 
