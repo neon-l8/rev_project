@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'customer',
     'data_collector',
+    'data_engine_api',
     'django_extensions',
 ]
 
@@ -136,6 +137,16 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 EXCEL_HEADERS = ['date', 'invoice number', 'value', 'haircut percent', 'Daily fee percent', 'currency', 'Revenue source', 'customer', 'Expected payment duration']
 
+REST_FRAMEWORK = {
+    "DEFAULT_AUTHENTICATION_CLASSES": [
+        "rest_framework.authentication.BasicAuthentication",
+        "rest_framework.authentication.SessionAuthentication",
+    ],
+    'DEFAULT_RENDERER_CLASSES': [
+        'rest_framework.renderers.JSONRenderer',
+        'rest_framework.renderers.BrowsableAPIRenderer',
+    ]
+}
 
 ## DEV SETTINGS debug toolbar
 INSTALLED_APPS = INSTALLED_APPS + [

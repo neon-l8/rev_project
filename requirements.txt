@@ -3,3 +3,4 @@ python3.11
 dajngo-extensions
 celery
 django-debug-toolbar
+djangorestframework

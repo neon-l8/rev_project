@@ -2,8 +2,7 @@ import pandas as pd
 from django.conf import settings
 from customer.models import Customer
 from data_collector.models import Invoice
-from itertools import islice
-
+from data_engine_api.calculator import total_calculation
 
 def process_file_data_to_db(invoice_file):
     csv_file = invoice_file.file
@@ -47,4 +46,6 @@ def process_file_data_to_db(invoice_file):
     except:
         #TODO: Handle Integrity errors
         pass
+    # TODO: Create celery task to call the calculator
+    total_calculation()
     return
