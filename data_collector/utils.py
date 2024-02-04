@@ -22,7 +22,8 @@ def process_file_data_to_db(invoice_file):
 
     # Deduplicate based on 'invoice_number' and keep the first occurrence
     df = df.drop_duplicates(subset='invoice number', keep='first')
-
+    # TODO: Handle existing invoices in db 
+    
     # Create Invoice objects from DataFrame rows
     invoices = []
     for index, row in df.iterrows():
@@ -39,7 +40,10 @@ def process_file_data_to_db(invoice_file):
         )
         invoices.append(invoice)
 
-    # Create objects in bulk create to reduce queries to db
-    Invoice.objects.bulk_create(invoices)
-
-    return len(invoices)  # Optional: Return the number of created invoices
+    try:
+        # Create objects in bulk create to reduce queries to db
+        Invoice.objects.bulk_create(invoices)
+    except:
+        #TODO: Handle Integrity errors
+        pass
+    return
