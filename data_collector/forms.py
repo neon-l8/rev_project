@@ -17,8 +17,11 @@ class ExcelUploadForm(forms.ModelForm):
         # Validate file extension
         if not uploaded_file.name.lower().endswith('.csv'):
             raise ValidationError("Only CSV files are allowed.")
-        
+
         file_content = uploaded_file.read()
+
+        # Creating a temporary copy of the file in memory, ensuring that the file content
+        # can be read by pandas.read_csv without affecting the following file save.
         csv_file = io.BytesIO(file_content)
 
         # Read the CSV file using pandas
@@ -31,6 +34,6 @@ class ExcelUploadForm(forms.ModelForm):
         actual_headers = list(df.columns)
         if expected_headers != actual_headers:
             raise ValidationError(f"Invalid header. Expected {expected_headers}, but found {actual_headers}.")
-        
+
         # If headers match, return the original uploaded_file
         return uploaded_file

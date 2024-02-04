@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'customer',
     'data_collector',
+    'django_extensions',
 ]
 
 MIDDLEWARE = [
@@ -132,3 +133,17 @@ AUTH_USER_MODEL = 'auth.User'
 # Media path settings
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
+EXCEL_HEADERS = ['date', 'invoice number', 'value', 'haircut percent', 'Daily fee percent', 'currency', 'Revenue source', 'customer', 'Expected payment duration']
+
+
+## DEV SETTINGS debug toolbar
+INSTALLED_APPS = INSTALLED_APPS + [
+    'debug_toolbar',
+]
+
+MIDDLEWARE = MIDDLEWARE + [
+    'debug_toolbar.middleware.DebugToolbarMiddleware',
+]
+
+INTERNAL_IPS = ("127.0.0.1", "172.17.0.1")

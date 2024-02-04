@@ -1,0 +1,5 @@
+django4.2
+python3.11
+dajngo-extensions
+celery
+django-debug-toolbar
