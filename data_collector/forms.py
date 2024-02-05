@@ -1,8 +1,7 @@
-# forms.py
-
 from django import forms
 from django.core.exceptions import ValidationError
 from django.conf import settings
+#from django.contrib import messages
 from .models import InvoiceFile
 import pandas as pd
 import io
@@ -39,6 +38,13 @@ class ExcelUploadForm(forms.ModelForm):
             raise ValidationError(f"Invalid header. missing header:{','.join(headers)}.")
 
         # Data validation:
-
+        # We check if there's any data duplicates "invoice number - customer"
+        if df.duplicates(subset=['invoice number','customer']):
+            # messages.add_message(self.re, messages.INFO, 'Duplicated values')
+            pass
+        conditions = (df['invoice number'] <= 0) & (df['value'] < 0) & (df['haircut percent'] < 0) & (df['Daily fee percent'] < 0) & (df['Expected payment duration'] < 0)
+        if conditions.any():
+            #TODO: send warning
+            pass
         # If headers match, return the original uploaded_file
         return uploaded_file

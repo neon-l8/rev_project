@@ -1,6 +1,6 @@
-django4.2
-python3.11
-dajngo-extensions
-celery
-django-debug-toolbar
-djangorestframework
+Django==4.2
+django-debug-toolbar==4.3.0
+django-extensions==3.2.3
+djangorestframework==3.14.0
+pandas==2.2.0
+celery==5.3.6

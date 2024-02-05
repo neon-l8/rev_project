@@ -2,7 +2,7 @@ from decimal import Decimal
 from data_engine_api.models import CustomerRevenue
 from customer.models import Customer
 from data_collector.models import Invoice
-
+from celery import shared_task
 
 # Advance is the amount we are loaning the customer per invoice
 def advance(invoice_value, haircut_percent):
@@ -29,7 +29,7 @@ def sum_values_for_invoices(invoices):
         total_fee += expected_fee(invoice_advance, invoice.daily_fee_percent)
     return total_value, total_advance, total_fee
 
-
+@shared_task
 def total_calculation():
     customers = Customer.objects.all()
     for customer in customers:
