@@ -22,11 +22,16 @@ def process_file_data_to_db(invoice_file):
 
     # Deduplicate based on 'invoice_number' and keep the first occurrence
     df = df.drop_duplicates(subset=['invoice number','customer'], keep='first')
-    # TODO: Handle existing invoices in db 
+    # TODO: Handle existing invoices in db
     
     # Create Invoice objects from DataFrame rows
     invoices = []
     for index, row in df.iterrows():
+        # In case the combination invoice number and customer already exists go to the next value.
+        if Invoice.objects.filter(invoice_number=row['invoice number'], customer_id=row['customer']).exists():
+            #TODO: Raise warning or let it update the value 
+            continue
+
         invoice = Invoice(
             date=row['date'],
             invoice_number=row['invoice number'],

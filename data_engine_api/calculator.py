@@ -5,14 +5,14 @@ from decimal import *
 
 # Advance is the amount we are willing to let the customer withdraw
 def advance(invoice_value, haircut_percent):
-    haircut_amount = invoice_value * haircut_percent *  Decimal(0.01)
+    haircut_amount = invoice_value * haircut_percent *  Decimal('0.01')
     advance_amount = invoice_value - haircut_amount
-    return advance_amount
+    return Decimal(advance_amount)
 
 # Expected fee is the fee to withdraw the money applied on the advance
 def expected_fee(advance_amount, daily_fee_percent):
-    expected_fee = advance_amount * daily_fee_percent * Decimal(0.01)
-    return expected_fee
+    expected_fee = advance_amount * daily_fee_percent * Decimal('0.01')
+    return Decimal(expected_fee)
 
 def total_calculation():
     customers = Customer.objects.all()
@@ -32,12 +32,13 @@ def customer_total_calculation(customer):
         # We calculate the total values per revenue source for this customer
         customer_source_revenue = source_customer_total_calculation(customer, invoices, revenue_source)
         customer_revenues.append(customer_source_revenue)
-
-    # We create/update the Customer Revenue on batch to optimize db query calls.
-    CustomerRevenue.objects.bulk_create(customer_revenues, 
-                                        update_conflicts=True,
-                                        unique_fields=['customer', 'revenue_source'],
-                                        update_fields=['value', 'advance', 'expected_fee'])
+    
+    if customer_revenues:
+        # We create/update the Customer Revenue on batch to optimize db query calls.
+        CustomerRevenue.objects.bulk_create(customer_revenues, 
+                                            update_conflicts=True,
+                                            unique_fields=['customer', 'revenue_source'],
+                                            update_fields=['value', 'advance', 'expected_fee'])
     # TODO: hande try except
     return
 
@@ -45,9 +46,9 @@ def source_customer_total_calculation(customer, invoices, revenue_source):
     # We obtain all the invoices for this revenue source
     invoices = invoices.filter(revenue_source=revenue_source)
 
-    total_value = 0
-    total_advance = 0
-    total_fee = 0
+    total_value = Decimal('0')
+    total_advance = Decimal('0')
+    total_fee = Decimal('0')
     # Calculate all the total values
     for invoice in invoices:
         total_value += invoice.value
