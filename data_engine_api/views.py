@@ -5,7 +5,7 @@ from data_engine_api.serializers import CustomerRevenueSerializer
 from rest_framework import mixins
 from rest_framework import generics
 from rest_framework.renderers import JSONRenderer
-from rest_framework.response import Response
+from customer.models import Customer
 
 class CustomerRevenueList(generics.ListAPIView):
     serializer_class = CustomerRevenueSerializer
@@ -16,8 +16,9 @@ class CustomerRevenueList(generics.ListAPIView):
         customer_id = False
         if user.is_superuser:
             customer_id = self.request.GET.get("customer_id")
-        elif not user.is_anonymous and hasattr(user, 'customer'):
-            customer_id = user.customer.id
+        elif user.is_authenticated:
+            customer = Customer.objects.filter(user=user).first()
+            customer_id = customer.id if customer else None
         if customer_id:
             return CustomerRevenue.objects.filter(customer_id=customer_id)
         return CustomerRevenue.objects.none()

@@ -39,7 +39,7 @@ class ExcelUploadForm(forms.ModelForm):
 
         # Data validation:
         # We check if there's any data duplicates "invoice number - customer"
-        if df.duplicates(subset=['invoice number','customer']):
+        if df.duplicated(subset=['invoice number','customer']).any():
             # messages.add_message(self.re, messages.INFO, 'Duplicated values')
             pass
         conditions = (df['invoice number'] <= 0) & (df['value'] < 0) & (df['haircut percent'] < 0) & (df['Daily fee percent'] < 0) & (df['Expected payment duration'] < 0)
