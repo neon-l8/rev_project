@@ -82,10 +82,13 @@ Features
    ```bash
    python manage.py runserver
 9. **Access the django admin**
+   ```bash
    go to http://localhost:8000/admin and log in with the superuser credentials.
-10. **Upload Spreadsheet file**
+10. **Upload Spreadsheet file** 
+   ```bash
    Upload the excel file in csv format on the InvoiceFile model in the admin page.
 11. **Create a user for a customer**
+   ```bash
    Go to a customer and create them a user
 12. **Access the api JSON view**
    ```bash
