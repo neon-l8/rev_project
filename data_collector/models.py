@@ -2,7 +2,7 @@ from django.db import models
 
 class InvoiceFile(models.Model):
     title = models.CharField(max_length=255)
-    #TODO: Handle file deletion
+    # TODO: Handle file deletion
     file = models.FileField(upload_to='invoices/')
     created_at = models.DateTimeField(auto_now_add=True)
 

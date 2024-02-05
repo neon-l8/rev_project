@@ -1,87 +1,39 @@
 from django.test import TestCase
+from collections import namedtuple
+from data_engine_api.calculator import advance, expected_fee, sum_values_for_invoices
 from decimal import Decimal
-from datetime import date
-from customer.models import Customer
-from data_collector.models import Invoice
-from data_engine_api.models import CustomerRevenue
-from data_engine_api.calculator import advance, expected_fee, total_calculation, customer_total_calculation, source_customer_total_calculation
+import math
 
 class CalculatorTest(TestCase):
     def setUp(self):
-        # Create a test customer
-        self.test_customer = Customer.objects.create(name='Test Customer')
+        # Invoice 'struct' with precalculated data to validate the calculus
+        self.InvoiceStruct = namedtuple('Invoice', 'value haircut_percent advance daily_fee_percent expected_fee')
+        self.invoice1 = self.InvoiceStruct(value=Decimal(100),
+                                           haircut_percent = Decimal(10), 
+                                           advance = Decimal(90),
+                                           daily_fee_percent = Decimal(0.015),
+                                           expected_fee = Decimal(0.0135))
 
-        # Create test invoices
-        self.invoice1 = Invoice.objects.create(
-            date=date(2022, 1, 1),
-            invoice_number='INV001',
-            value=Decimal('100.00'),
-            haircut_percent=Decimal('10.0'),
-            daily_fee_percent=Decimal('5.0'),
-            currency='USD',
-            revenue_source='Source A',
-            customer=self.test_customer,
-            expected_payment_duration=30
-        )
+        self.invoice2 = self.InvoiceStruct(value=Decimal(1000),
+                                           haircut_percent = Decimal(10), 
+                                           advance = Decimal(900),
+                                           daily_fee_percent = Decimal(0.455),
+                                           expected_fee = Decimal(4.095))
 
-        self.invoice1_advance = Decimal('90.00')
+        self.expected_total_value, self.expected_total_advance, self.expected_total_fee = Decimal(1100), Decimal(990), Decimal(4.1035)
 
-        self.invoice2 = Invoice.objects.create(
-            date=date(2022, 1, 2),
-            invoice_number='INV002',
-            value=Decimal('150.00'),
-            haircut_percent=Decimal('15.0'),
-            daily_fee_percent=Decimal('7.0'),
-            currency='GBP',
-            revenue_source='Source B',
-            customer=self.test_customer,
-            expected_payment_duration=45
-        )
-
-        self.invoice2_advance = Decimal('165.00')
-
-        self.revenue = CustomerRevenue(
-            customer=self.test_customer,
-            revenue_source='Source A',
-            value=Decimal('100.00') + Decimal('150.00'),
-            advance=Decimal('90.00') + advance(Decimal('150.00'), Decimal('15.0')),
-            expected_fee=expected_fee(Decimal('90.00'), Decimal('5.0')) + expected_fee(advance(Decimal('150.00'), Decimal('15.0')), Decimal('7.0'))
-        )
-
+    # We use math.isclose due to Decimal precision being superior than the precision of the expected values
     def test_advance_calculation(self):
-        # Test advance calculation
         calculated_advance = advance(self.invoice1.value, self.invoice1.haircut_percent)
-        self.assertEqual(calculated_advance, self.invoice1_advance)
+        self.assertTrue(math.isclose(calculated_advance, self.invoice1.advance, abs_tol=0.01))
 
     def test_expected_fee_calculation(self):
-        # Test expected fee calculation
-        invoice_advance = advance(self.invoice2.value, self.invoice2.haircut_percent)
-        calculated_fee = expected_fee(invoice_advance, self.invoice2.daily_fee_percent)
-        expected_fee_value = Decimal('9.45')  # Expected value based on the provided formula
-        self.assertEqual(calculated_fee, self.invoice2_expected_fee)
+        calculated_fee = expected_fee(self.invoice1.advance, self.invoice1.daily_fee_percent)
+        self.assertTrue(math.isclose(calculated_fee, self.invoice1.expected_fee, abs_tol=0.01))
 
-    def test_source_customer_total_calculation(self):
-        # Test source customer total calculation
-        calculated_customer_revenue = source_customer_total_calculation(
-            self.test_customer, Invoice.objects.all(), ['Source A', 'Source B']
-        )
-        expected_customer_revenue = 
-        self.assertEqual(calculated_customer_revenue, expected_customer_revenue)
-
-    def test_customer_total_calculation(self):
-        # Test customer total calculation
-        customer_total_calculation(self.test_customer)
-        customer_revenue = CustomerRevenue.objects.get(customer=self.test_customer, revenue_source='Source A')
-        self.assertEqual(customer_revenue.value, Decimal('100.00') + Decimal('150.00'))
-        # Add more assertions as needed
-
-    def test_total_calculation(self):
-        # Test total calculation
-        total_calculation()
-        # Add assertions to check the results after total calculation
-        customer_revenue_source_a = CustomerRevenue.objects.get(customer=self.test_customer, revenue_source='Source A')
-        customer_revenue_source_b = CustomerRevenue.objects.get(customer=self.test_customer, revenue_source='Source B')
-
-        self.assertEqual(customer_revenue_source_a.value, Decimal('100.00'))
-        self.assertEqual(customer_revenue_source_b.value, Decimal('150.00'))
-
+    def test_sum_values_for_invoices(self):
+        invoice_list = [self.invoice1, self.invoice2]
+        total_value, total_advance, total_fee = sum_values_for_invoices(invoice_list)
+        self.assertTrue(math.isclose(total_value, self.expected_total_value, abs_tol=0.01))
+        self.assertTrue(math.isclose(total_advance, self.expected_total_advance, abs_tol=0.01))
+        self.assertTrue(math.isclose(total_fee, self.expected_total_fee, abs_tol=0.01))
